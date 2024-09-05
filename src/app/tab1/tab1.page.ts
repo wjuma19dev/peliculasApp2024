@@ -1,6 +1,11 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { MoviesService } from '../services/movies.service';
-import { ResponseMDB } from '../interfaces/interfaces';
+import { Movie } from '../interfaces/interfaces';
+
+// SwipSlider config
+import { IonicSlides } from '@ionic/angular';
+import { register } from 'swiper/element/bundle';
+register();
 
 @Component({
   selector: 'app-tab1',
@@ -9,14 +14,15 @@ import { ResponseMDB } from '../interfaces/interfaces';
 })
 export class Tab1Page implements OnInit {
 
-  
+  swiperModules = [IonicSlides];
+  movies = signal<Movie[]>([]);
   moviesService = inject(MoviesService);
 
   constructor() {}
 
   ngOnInit() {
     this.moviesService.getFeatures().subscribe({
-      next: (responseMDB: ResponseMDB ) => console.log(responseMDB.results),
+      next: (response) =>{ console.log(response); this.movies.set(response.results)},
       error: error => console.error('Error:', error)
     })
   }
